@@ -16,6 +16,10 @@ namespace RequestFeedbackBot
     {
         private readonly BotAccessors _accessors;
         private readonly ILogger _logger;
+
+        /// <summary>
+        /// The <see cref="DialogSet"/> that contains all the Dialogs that can be used at runtime.
+        /// </summary>
         private DialogSet _dialogs;
 
         public RequestFeedbackDialog(BotAccessors accessors, ILoggerFactory loggerFactory)
@@ -28,14 +32,14 @@ namespace RequestFeedbackBot
                 throw new System.ArgumentNullException(nameof(loggerFactory));
             }
 
-            //Création des traces pour le dialogue RequestFeedbackDialog
+
             _logger = loggerFactory.CreateLogger<RequestFeedbackDialog>();
             _logger.LogTrace("RequestFeedbackDialogBot turn start.");
 
-            //Initialisation du dialoge. Ce dernier à besoin DialogState qui sera appelé dans le Turn Context.
+            // The DialogSet needs a DialogState accessor, it will call it when it has a turn context.
             _dialogs = new DialogSet(accessors.ConversationDialogState);
 
-            //Création d'un tableau, avec les differentes fonctions qui seront éxecutée en cascade.
+            // This array defines how the Waterfall will execute.
             var waterfallSteps = new WaterfallStep[]
             {
                 RequestStepAsync,
@@ -47,12 +51,23 @@ namespace RequestFeedbackBot
 
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
             _dialogs.Add(new WaterfallDialog("details", waterfallSteps));
-            _dialogs.Add(new ConfirmPrompt("confirm",defaultLocale:Culture.French));
+            _dialogs.Add(new ConfirmPrompt("confirm", defaultLocale: Culture.French));
             _dialogs.Add(new TextPrompt("nom"));
             _dialogs.Add(new TextPrompt("email", EmailPromptValidatorAsync));
             _dialogs.Add(new TextPrompt("message"));
         }
 
+        /// <summary>
+        /// Every conversation turn for our Bot will call this method.
+        /// </summary>
+        /// <param name="turnContext">A <see cref="ITurnContext"/> containing all the data needed
+        /// for processing this conversation turn. </param>
+        /// <param name="cancellationToken">(Optional) A <see cref="CancellationToken"/> that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="Task"/> that represents the work queued to execute.</returns>
+        /// <seealso cref="BotStateSet"/>
+        /// <seealso cref="ConversationState"/>
+        /// <seealso cref="IMiddleware"/>
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (turnContext == null)
@@ -60,11 +75,14 @@ namespace RequestFeedbackBot
                 throw new ArgumentNullException(nameof(turnContext));
             }
 
-           // turnContext.Activity.Locale = Culture.French;
-
+            // Run the DialogSet - let the framework identify the current state of the dialog from
+            // the dialog stack and figure out what (if any) is the active dialog.
             var dialogContext = await _dialogs.CreateContextAsync(turnContext, cancellationToken);
             var results = await dialogContext.ContinueDialogAsync(cancellationToken);
 
+            // Handle Message activity type, which is the main activity type for shown within a conversational interface
+            // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
+            // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
             if (turnContext.Activity.Type == ActivityTypes.Message)
             {
 
@@ -74,6 +92,7 @@ namespace RequestFeedbackBot
                     await dialogContext.BeginDialogAsync("details", null, cancellationToken);
                 }
             }
+            // Processes ConversationUpdate Activities to welcome the user.
             else if (turnContext.Activity.Type == ActivityTypes.ConversationUpdate)
             {
                 if (turnContext.Activity.MembersAdded.Any())
@@ -82,7 +101,7 @@ namespace RequestFeedbackBot
                     {
                         if (member.Id != turnContext.Activity.Recipient.Id)
                         {
-                            // Envois du message de bienvenue
+                            // Sends a welcome message to the user.
                             await SendWelcomeMessageAsync(turnContext, cancellationToken);
 
                             // If the DialogTurnStatus is Empty we should start a new dialog.
@@ -108,20 +127,31 @@ namespace RequestFeedbackBot
 
         private static async Task SendWelcomeMessageAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
-            
-                    await turnContext.SendActivityAsync(
-                "Bienvenue. Ce bot permet de recueillir vos avis.",
-                cancellationToken: cancellationToken);
-             
+
+            await turnContext.SendActivityAsync(
+        "Bienvenue. Ce bot permet de recueillir vos avis.",
+        cancellationToken: cancellationToken);
+
         }
 
+        /// <summary>
+        /// One of the functions that make up the <see cref="WaterfallDialog"/>.
+        /// </summary>
+        /// <param name="stepContext">The <see cref="WaterfallStepContext"/> gives access to the executing dialog runtime.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> RequestStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
             return await stepContext.PromptAsync("confirm", new PromptOptions { Prompt = MessageFactory.Text("Voulez-vous dddd?") }, cancellationToken);
         }
 
-
+        /// <summary>
+        /// One of the functions that make up the <see cref="WaterfallDialog"/>.
+        /// </summary>
+        /// <param name="stepContext">The <see cref="WaterfallStepContext"/> gives access to the executing dialog runtime.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> NameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             if ((bool)stepContext.Result)
@@ -138,6 +168,12 @@ namespace RequestFeedbackBot
             }
         }
 
+        /// <summary>
+        /// One of the functions that make up the <see cref="WaterfallDialog"/>.
+        /// </summary>
+        /// <param name="stepContext">The <see cref="WaterfallStepContext"/> gives access to the executing dialog runtime.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> NameConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // Get the current profile object from user state.
@@ -150,7 +186,12 @@ namespace RequestFeedbackBot
             return await stepContext.PromptAsync("email", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre adresse email ?") }, cancellationToken);
         }
 
-
+        /// <summary>
+        /// One of the functions that make up the <see cref="WaterfallDialog"/>.
+        /// </summary>
+        /// <param name="stepContext">The <see cref="WaterfallStepContext"/> gives access to the executing dialog runtime.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> EmailConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // Get the current profile object from user state.
@@ -163,7 +204,12 @@ namespace RequestFeedbackBot
             return await stepContext.PromptAsync("message", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre message ?") }, cancellationToken);
         }
 
-
+        /// <summary>
+        /// One of the functions that make up the <see cref="WaterfallDialog"/>.
+        /// </summary>
+        /// <param name="stepContext">The <see cref="WaterfallStepContext"/> gives access to the executing dialog runtime.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
@@ -179,11 +225,13 @@ namespace RequestFeedbackBot
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
 
-        private bool IsValidEmail(string source)
-        {
-            return new EmailAddressAttribute().IsValid(source);
-        }
-
+        /// <summary>
+        /// This is an example of a custom validator. 
+        /// Returning true indicates the recognized value is acceptable. Returning false will trigger re-prompt behavior.
+        /// </summary>
+        /// <param name="promptContext">The <see cref="PromptValidatorContext"/> gives the validator code access to the runtime, including the recognized value and the turn context.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="Task"/> representing the operation result of the Turn operation.</returns>
         private Task<bool> EmailPromptValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
         {
             var result = promptContext.Recognized.Value;
@@ -199,6 +247,11 @@ namespace RequestFeedbackBot
 
             // Note you are free to do async IO from within a validator. Here we had no need so just complete.
             return Task.FromResult(false);
+        }
+
+        private bool IsValidEmail(string source)
+        {
+            return new EmailAddressAttribute().IsValid(source);
         }
     }
 }
