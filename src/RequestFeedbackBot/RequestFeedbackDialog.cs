@@ -86,12 +86,13 @@ namespace RequestFeedbackBot
             if (turnContext.Activity.Type == ActivityTypes.Message)
             {
 
-                //If the DialogTurnStatus is Empty we should start a new dialog.
+                // If the DialogTurnStatus is Empty we should start a new dialog.
                 if (results.Status == DialogTurnStatus.Empty)
                 {
                     await dialogContext.BeginDialogAsync("details", null, cancellationToken);
                 }
             }
+
             // Processes ConversationUpdate Activities to welcome the user.
             else if (turnContext.Activity.Type == ActivityTypes.ConversationUpdate)
             {
@@ -143,7 +144,7 @@ namespace RequestFeedbackBot
         private async Task<DialogTurnResult> RequestStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
-            return await stepContext.PromptAsync("confirm", new PromptOptions { Prompt = MessageFactory.Text("Voulez-vous dddd?") }, cancellationToken);
+            return await stepContext.PromptAsync("confirm", new PromptOptions { Prompt = MessageFactory.Text("Voulez-vous nous laisser vos commentaires ?") }, cancellationToken);
         }
 
         /// <summary>
@@ -158,11 +159,11 @@ namespace RequestFeedbackBot
             {
                 // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
                 // Running a prompt here means the next WaterfallStep will be run when the users response is received.
-                return await stepContext.PromptAsync("nom", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre nom ?") }, cancellationToken);
+                return await stepContext.PromptAsync("nom", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre nom.") }, cancellationToken);
             }
             else
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Merci"), cancellationToken);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Merci. Aurevoir."), cancellationToken);
                 return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
 
             }
@@ -183,7 +184,7 @@ namespace RequestFeedbackBot
             feedbackData.Name = (string)stepContext.Result;
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
-            return await stepContext.PromptAsync("email", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre adresse email ?") }, cancellationToken);
+            return await stepContext.PromptAsync("email", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre adresse email.") }, cancellationToken);
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace RequestFeedbackBot
             feedbackData.Email = (string)stepContext.Result;
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
-            return await stepContext.PromptAsync("message", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre message ?") }, cancellationToken);
+            return await stepContext.PromptAsync("message", new PromptOptions { Prompt = MessageFactory.Text("Veuillez saisir votre message.") }, cancellationToken);
         }
 
         /// <summary>
