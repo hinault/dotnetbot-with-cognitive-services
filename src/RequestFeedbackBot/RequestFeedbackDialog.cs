@@ -177,10 +177,10 @@ namespace RequestFeedbackBot
         /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> NameConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            // Get the current profile object from user state.
+            // Get the current feedbackData object from user state.
             var feedbackData = await _accessors.FeedbackData.GetAsync(stepContext.Context, () => new FeedbackData(), cancellationToken);
 
-            // Update the profile.
+            // Update the feedbackData.
             feedbackData.Name = (string)stepContext.Result;
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
@@ -195,10 +195,10 @@ namespace RequestFeedbackBot
         /// <returns>A <see cref="DialogTurnResult"/> to communicate some flow control back to the containing WaterfallDialog.</returns>
         private async Task<DialogTurnResult> EmailConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            // Get the current profile object from user state.
+            // Get the current feedbackData object from user state.
             var feedbackData = await _accessors.FeedbackData.GetAsync(stepContext.Context, () => new FeedbackData(), cancellationToken);
 
-            // Update the profile.
+            // Update the feedbackData.
             feedbackData.Email = (string)stepContext.Result;
 
             // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
@@ -214,10 +214,10 @@ namespace RequestFeedbackBot
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
-            // Get the current profile object from user state.
+            // Get the current feedbackData object from user state.
             var feedbackData = await _accessors.FeedbackData.GetAsync(stepContext.Context, () => new FeedbackData(), cancellationToken);
 
-            // Update the profile.
+            // Update the feedbackData.
             feedbackData.Message = (string)stepContext.Result;
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Votre nom {feedbackData.Name}, votre email {feedbackData.Email} et votre message {feedbackData.Message}."), cancellationToken);
@@ -245,8 +245,6 @@ namespace RequestFeedbackBot
             }
 
             // Not calling End indicates validation failure. This will trigger a RetryPrompt if one has been defined.
-
-            // Note you are free to do async IO from within a validator. Here we had no need so just complete.
             return Task.FromResult(false);
         }
 
