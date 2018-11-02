@@ -148,7 +148,7 @@ namespace RequestFeedbackBot
                 var accessors = new BotAccessors(conversationState, userState)
                 {
                     ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
-                    FeedbackData = userState.CreateProperty<FeedbackData>("UserProfile"),
+                    FeedbackData = userState.CreateProperty<FeedbackData>("FeedbackData"),
                 };
 
                 return accessors;

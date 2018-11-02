@@ -19,7 +19,8 @@ namespace RequestFeedbackBot
         /// Initializes a new instance of the <see cref="BotAccessors"/> class.
         /// Contains the <see cref="ConversationState"/> and associated <see cref="IStatePropertyAccessor{T}"/>.
         /// </summary>
-        /// <param name="conversationState">The state object that stores the counter.</param>
+        /// <param name="conversationState">The state object that stores the conversationState.</param>
+        /// <param name="userState">The state object that stores the userState.</param>
         public BotAccessors(ConversationState conversationState, UserState userState)
         {
             ConversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
@@ -27,13 +28,19 @@ namespace RequestFeedbackBot
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="IStatePropertyAccessor{T}"/> for CounterState.
+        /// Gets or sets the <see cref="IStatePropertyAccessor{T}"/> for FeedbackData.
         /// </summary>
         /// <value>
-        /// The accessor stores the turn count for the conversation.
+        /// The accessor stores the FeedbackData for the conversation.
         /// </value>
         public IStatePropertyAccessor<FeedbackData> FeedbackData { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets the <see cref="IStatePropertyAccessor{T}"/> for ConversationDialogState.
+        /// </summary>
+        /// <value>
+        /// The accessor stores the ConversationDialogState for the conversation.
         /// </value>
         public IStatePropertyAccessor<DialogState> ConversationDialogState { get; set; }
 
