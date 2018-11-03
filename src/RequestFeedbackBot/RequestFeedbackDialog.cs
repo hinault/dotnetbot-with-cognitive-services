@@ -78,23 +78,10 @@ namespace RequestFeedbackBot
             // Run the DialogSet - let the framework identify the current state of the dialog from
             // the dialog stack and figure out what (if any) is the active dialog.
             var dialogContext = await _dialogs.CreateContextAsync(turnContext, cancellationToken);
-            var results = await dialogContext.ContinueDialogAsync(cancellationToken);
-
+           
             // Handle Message activity type, which is the main activity type for shown within a conversational interface
-            // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
-            // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
-            if (turnContext.Activity.Type == ActivityTypes.Message)
-            {
-
-                // If the DialogTurnStatus is Empty we should start a new dialog.
-                if (results.Status == DialogTurnStatus.Empty)
-                {
-                    await dialogContext.BeginDialogAsync("details", null, cancellationToken);
-                }
-            }
-
             // Processes ConversationUpdate Activities to welcome the user.
-            else if (turnContext.Activity.Type == ActivityTypes.ConversationUpdate)
+            if (turnContext.Activity.Type == ActivityTypes.ConversationUpdate)
             {
                 if (turnContext.Activity.MembersAdded.Any())
                 {
@@ -104,25 +91,31 @@ namespace RequestFeedbackBot
                         {
                             // Sends a welcome message to the user.
                             await SendWelcomeMessageAsync(turnContext, cancellationToken);
-
-                            // If the DialogTurnStatus is Empty we should start a new dialog.
-                            if (results.Status == DialogTurnStatus.Empty)
-                            {
-                                await dialogContext.BeginDialogAsync("details", null, cancellationToken);
-                            }
+                            // Pushes a new dialog onto the dialog stack.
+                            await dialogContext.BeginDialogAsync("details", null, cancellationToken);
                         }
                     }
                 }
             }
-            else
+
+            // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
+            // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
+            else if (turnContext.Activity.Type == ActivityTypes.Message)
             {
-                await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected", cancellationToken: cancellationToken);
+                // Continues execution of the active dialog, if there is one
+               var results = await dialogContext.ContinueDialogAsync(cancellationToken);
+
+                // If the DialogTurnStatus is Empty we should start a new dialog.
+                if(results.Status == DialogTurnStatus.Empty)
+                {
+                    await dialogContext.BeginDialogAsync("details", null, cancellationToken);
+                }
             }
 
             // Save the dialog state into the conversation state.
             await _accessors.ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
 
-            // Save the user profile updates into the user state.
+            // Save the  FeedbackData updates into the user state.
             await _accessors.UserState.SaveChangesAsync(turnContext, false, cancellationToken);
         }
 
