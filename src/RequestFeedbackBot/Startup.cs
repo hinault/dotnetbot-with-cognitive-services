@@ -141,26 +141,9 @@ namespace RequestFeedbackBot
         {
             _loggerFactory = loggerFactory;
 
-            var cultureInfo = new CultureInfo("fr-FR");
-
-            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-
             app.UseDefaultFiles()
                 .UseStaticFiles()
-                .UseBotFramework()
-                .UseRequestLocalization(new RequestLocalizationOptions
-                {
-                    DefaultRequestCulture = new RequestCulture(cultureInfo),
-                    SupportedCultures = new List<CultureInfo>
-    {
-        cultureInfo,
-    },
-                    SupportedUICultures = new List<CultureInfo>
-    {
-        cultureInfo,
-    }
-                });
+                .UseBotFramework();
         }
     }
 }
