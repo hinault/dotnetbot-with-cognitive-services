@@ -7,12 +7,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Integration;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Configuration;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace GoogleAuthenticationBot
 {
@@ -116,7 +118,20 @@ namespace GoogleAuthenticationBot
 
             // Create and add conversation state.
             var conversationState = new ConversationState(dataStore);
-            services.AddSingleton(conversationState);
+
+            services.AddSingleton<GoogleAuthenticationBotAccessors> (options =>
+
+            {
+                var accessors = new GoogleAuthenticationBotAccessors(conversationState)
+                {
+                    ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
+                 
+                };
+
+                return accessors;
+
+            }
+            );
 
             services.AddBot<GoogleAuthenticationBot>(options =>
            {
