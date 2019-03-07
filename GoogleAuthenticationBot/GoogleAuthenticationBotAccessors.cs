@@ -24,6 +24,13 @@ namespace GoogleAuthenticationBot
             ConversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="IStatePropertyAccessor{T}"/> for ConversationDialogState.
+        /// </summary>
+        /// <value>
+        /// The accessor stores the ConversationDialogState for the conversation.
+        /// </value>
+        public IStatePropertyAccessor<DialogState> ConversationDialogState { get; set; }
 
         /// <summary>
         /// Gets the <see cref="ConversationState"/> object for the conversation.
