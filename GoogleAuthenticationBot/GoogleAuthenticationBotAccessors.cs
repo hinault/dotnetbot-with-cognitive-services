@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
 
 namespace GoogleAuthenticationBot
 {
