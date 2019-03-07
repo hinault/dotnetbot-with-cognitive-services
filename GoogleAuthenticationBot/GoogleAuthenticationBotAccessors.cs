@@ -30,7 +30,7 @@ namespace GoogleAuthenticationBot
         /// <value>
         /// The accessor stores the ConversationDialogState for the conversation.
         /// </value>
-       // public IStatePropertyAccessor<DialogState> ConversationDialogState { get; set; }
+        public IStatePropertyAccessor<DialogState> ConversationDialogState { get; set; }
 
         /// <summary>
         /// Gets the <see cref="ConversationState"/> object for the conversation.
