@@ -24,20 +24,6 @@ namespace GoogleAuthenticationBot
             ConversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
         }
 
-        /// <summary>
-        /// Gets the <see cref="IStatePropertyAccessor{T}"/> name used for the <see cref="CounterState"/> accessor.
-        /// </summary>
-        /// <remarks>Accessors require a unique name.</remarks>
-        /// <value>The accessor name for the counter accessor.</value>
-        public static string CounterStateName { get; } = $"{nameof(GoogleAuthenticationBotAccessors)}.CounterState";
-
-        /// <summary>
-        /// Gets or sets the <see cref="IStatePropertyAccessor{T}"/> for CounterState.
-        /// </summary>
-        /// <value>
-        /// The accessor stores the turn count for the conversation.
-        /// </value>
-        public IStatePropertyAccessor<CounterState> CounterState { get; set; }
 
         /// <summary>
         /// Gets the <see cref="ConversationState"/> object for the conversation.
