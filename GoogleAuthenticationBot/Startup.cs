@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Integration;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Configuration;
@@ -124,12 +125,10 @@ namespace GoogleAuthenticationBot
             {
                 var accessors = new GoogleAuthenticationBotAccessors(conversationState)
                 {
-                   // ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
-                 
+                   ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
                 };
 
                 return accessors;
-
             }
             );
 
