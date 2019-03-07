@@ -20,7 +20,7 @@ namespace GoogleAuthenticationBot
     /// <see cref="IStatePropertyAccessor{T}"/> object are created with a singleton lifetime.
     /// </summary>
     /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.1"/>
-    public class GoogleAuthenticationBotBot : IBot
+    public class GoogleAuthenticationBot : IBot
     {
         private readonly GoogleAuthenticationBotAccessors _accessors;
         private readonly ILogger _logger;
@@ -31,7 +31,7 @@ namespace GoogleAuthenticationBot
         /// <param name="conversationState">The managed conversation state.</param>
         /// <param name="loggerFactory">A <see cref="ILoggerFactory"/> that is hooked to the Azure App Service provider.</param>
         /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider"/>
-        public GoogleAuthenticationBotBot(ConversationState conversationState, ILoggerFactory loggerFactory)
+        public GoogleAuthenticationBot(ConversationState conversationState, ILoggerFactory loggerFactory)
         {
             if (conversationState == null)
             {
@@ -47,7 +47,7 @@ namespace GoogleAuthenticationBot
             {
                           };
 
-            _logger = loggerFactory.CreateLogger<GoogleAuthenticationBotBot>();
+            _logger = loggerFactory.CreateLogger<GoogleAuthenticationBot>();
             _logger.LogTrace("Turn start.");
         }
 

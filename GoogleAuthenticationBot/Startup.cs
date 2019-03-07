@@ -118,13 +118,13 @@ namespace GoogleAuthenticationBot
             var conversationState = new ConversationState(dataStore);
             services.AddSingleton(conversationState);
 
-            services.AddBot<GoogleAuthenticationBotBot>(options =>
+            services.AddBot<GoogleAuthenticationBot>(options =>
            {
                options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
 
                 // Catches any errors that occur during a conversation turn and logs them to currently
                 // configured ILogger.
-                ILogger logger = _loggerFactory.CreateLogger<GoogleAuthenticationBotBot>();
+                ILogger logger = _loggerFactory.CreateLogger<GoogleAuthenticationBot>();
 
                options.OnTurnError = async (context, exception) =>
                {
