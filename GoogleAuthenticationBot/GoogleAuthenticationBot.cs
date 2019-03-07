@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -79,8 +80,48 @@ namespace GoogleAuthenticationBot
         /// <seealso cref="IMiddleware"/>
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
-           
 
+           if(turnContext == null)
+            {
+                throw new ArgumentNullException(nameof(turnContext));
+            }
+
+            // Run the DialogSet - let the framework identify the current state of the dialog from
+            // the dialog stack and figure out what (if any) is the active dialog.
+            var dialogContext = await _dialogs.CreateContextAsync(turnContext, cancellationToken);
+
+            // Handle Message activity type, which is the main activity type for shown within a conversational interface
+            // Processes ConversationUpdate Activities to welcome the user.
+            if (turnContext.Activity.Type == ActivityTypes.ConversationUpdate)
+            {
+                if (turnContext.Activity.MembersAdded.Any())
+                {
+                    foreach (var member in turnContext.Activity.MembersAdded)
+                    {
+                        if (member.Id != turnContext.Activity.Recipient.Id)
+                        {
+                            // Sends a welcome message to the user.
+                            await SendWelcomeMessageAsync(turnContext, cancellationToken);
+                            // Pushes a new dialog onto the dialog stack.
+                            await dialogContext.BeginDialogAsync("details", null, cancellationToken);
+                        }
+                    }
+                }
+            }
+
+            // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
+            // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
+            else if (turnContext.Activity.Type == ActivityTypes.Message)
+            {
+                // Continues execution of the active dialog, if there is one
+                var results = await dialogContext.ContinueDialogAsync(cancellationToken);
+
+                // If the DialogTurnStatus is Empty we should start a new dialog.
+                if (results.Status == DialogTurnStatus.Empty)
+                {
+                    await dialogContext.BeginDialogAsync("details", null, cancellationToken);
+                }
+            }
 
         }
 
