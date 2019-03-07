@@ -124,7 +124,7 @@ namespace GoogleAuthenticationBot
             {
                 var accessors = new GoogleAuthenticationBotAccessors(conversationState)
                 {
-                    ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
+                   // ConversationDialogState = conversationState.CreateProperty<DialogState>("DialogState"),
                  
                 };
 
