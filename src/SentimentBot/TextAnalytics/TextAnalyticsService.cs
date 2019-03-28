@@ -47,21 +47,5 @@ namespace SentimentBot.TextAnalytics
     }
 
 
-    class ApiKeyServiceClientCredentials : ServiceClientCredentials
-    {
-        private string _apiKey;
-
-        public ApiKeyServiceClientCredentials(string apikey)
-        {
-
-            this._apiKey = apikey;
-        }
-
-
-        public override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            request.Headers.Add("Ocp-Apim-Subscription-Key", "f158c058756e4253a8aa4592a46e1888");
-            return base.ProcessHttpRequestAsync(request, cancellationToken);
-        }
-    }
+  
 }
