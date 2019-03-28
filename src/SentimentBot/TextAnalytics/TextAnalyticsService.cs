@@ -11,7 +11,7 @@ using Microsoft.Rest;
 
 
 
-namespace SentimentBot
+namespace SentimentBot.TextAnalytics
 {
     public class TextAnalyticsService
     {
@@ -49,6 +49,15 @@ namespace SentimentBot
 
     class ApiKeyServiceClientCredentials : ServiceClientCredentials
     {
+        private string _apiKey;
+
+        public ApiKeyServiceClientCredentials(string apikey)
+        {
+
+            this._apiKey = apikey;
+        }
+
+
         public override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             request.Headers.Add("Ocp-Apim-Subscription-Key", "f158c058756e4253a8aa4592a46e1888");

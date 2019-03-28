@@ -20,8 +20,4 @@
     <PackageReference Include="Microsoft.Bot.Schema" Version="4.2.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="2.1.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TextAnalytics\" />
-  </ItemGroup>
 </Project>
