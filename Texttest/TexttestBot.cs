@@ -7,7 +7,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 
-namespace SentimentBot
+namespace Texttest
 {
     /// <summary>
     /// Represents a bot that processes incoming activities.
@@ -20,9 +20,9 @@ namespace SentimentBot
     /// <see cref="IStatePropertyAccessor{T}"/> object are created with a singleton lifetime.
     /// </summary>
     /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.1"/>
-    public class SentimentBot : IBot
+    public class TexttestBot : IBot
     {
-        private readonly SentimentBotAccessors _accessors;
+        private readonly TexttestAccessors _accessors;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace SentimentBot
         /// <param name="conversationState">The managed conversation state.</param>
         /// <param name="loggerFactory">A <see cref="ILoggerFactory"/> that is hooked to the Azure App Service provider.</param>
         /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider"/>
-        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory)
+        public TexttestBot(ConversationState conversationState, ILoggerFactory loggerFactory)
         {
             if (conversationState == null)
             {
@@ -43,12 +43,12 @@ namespace SentimentBot
                 throw new System.ArgumentNullException(nameof(loggerFactory));
             }
 
-            _accessors = new SentimentBotAccessors(conversationState)
+            _accessors = new TexttestAccessors(conversationState)
             {
-                CounterState = conversationState.CreateProperty<CounterState>(SentimentBotAccessors.CounterStateName),
+                CounterState = conversationState.CreateProperty<CounterState>(TexttestAccessors.CounterStateName),
             };
 
-            _logger = loggerFactory.CreateLogger<SentimentBot>();
+            _logger = loggerFactory.CreateLogger<TexttestBot>();
             _logger.LogTrace("Turn start.");
         }
 
@@ -81,8 +81,6 @@ namespace SentimentBot
                 // Set the property using the accessor.
                 await _accessors.CounterState.SetAsync(turnContext, state);
 
-
-               
                 // Save the new turn count into the conversation state.
                 await _accessors.ConversationState.SaveChangesAsync(turnContext);
 

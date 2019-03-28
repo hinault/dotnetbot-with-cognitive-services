@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace SentimentBot
+namespace Texttest
 {
     /// <summary>
     /// The Startup class configures services and the request pipeline.
@@ -81,9 +81,6 @@ namespace SentimentBot
             // Retrieve current endpoint.
             var environment = _isProduction ? "production" : "development";
             var service = botConfig.Services.FirstOrDefault(s => s.Type == "endpoint" && s.Name == environment);
-
-            var tt = new TextAnalyticsService(botConfig);
-
             if (service == null && _isProduction)
             {
                 // Attempt to load development environment
@@ -121,13 +118,13 @@ namespace SentimentBot
             var conversationState = new ConversationState(dataStore);
             services.AddSingleton(conversationState);
 
-            services.AddBot<SentimentBot>(options =>
+            services.AddBot<TexttestBot>(options =>
            {
                options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
 
                 // Catches any errors that occur during a conversation turn and logs them to currently
                 // configured ILogger.
-                ILogger logger = _loggerFactory.CreateLogger<SentimentBot>();
+                ILogger logger = _loggerFactory.CreateLogger<TexttestBot>();
 
                options.OnTurnError = async (context, exception) =>
                {
