@@ -20,7 +20,7 @@ namespace SentimentBot
     /// <see cref="IStatePropertyAccessor{T}"/> object are created with a singleton lifetime.
     /// </summary>
     /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.1"/>
-    public class SentimentBotBot : IBot
+    public class SentimentBot : IBot
     {
         private readonly SentimentBotAccessors _accessors;
         private readonly ILogger _logger;
@@ -31,7 +31,7 @@ namespace SentimentBot
         /// <param name="conversationState">The managed conversation state.</param>
         /// <param name="loggerFactory">A <see cref="ILoggerFactory"/> that is hooked to the Azure App Service provider.</param>
         /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider"/>
-        public SentimentBotBot(ConversationState conversationState, ILoggerFactory loggerFactory)
+        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory)
         {
             if (conversationState == null)
             {
@@ -48,7 +48,7 @@ namespace SentimentBot
                 CounterState = conversationState.CreateProperty<CounterState>(SentimentBotAccessors.CounterStateName),
             };
 
-            _logger = loggerFactory.CreateLogger<SentimentBotBot>();
+            _logger = loggerFactory.CreateLogger<SentimentBot>();
             _logger.LogTrace("Turn start.");
         }
 

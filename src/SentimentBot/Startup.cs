@@ -118,13 +118,13 @@ namespace SentimentBot
             var conversationState = new ConversationState(dataStore);
             services.AddSingleton(conversationState);
 
-            services.AddBot<SentimentBotBot>(options =>
+            services.AddBot<SentimentBot>(options =>
            {
                options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
 
                 // Catches any errors that occur during a conversation turn and logs them to currently
                 // configured ILogger.
-                ILogger logger = _loggerFactory.CreateLogger<SentimentBotBot>();
+                ILogger logger = _loggerFactory.CreateLogger<SentimentBot>();
 
                options.OnTurnError = async (context, exception) =>
                {
