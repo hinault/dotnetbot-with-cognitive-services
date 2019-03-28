@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
 using Microsoft.Azure.CognitiveServices.Language.TextAnalytics.Models;
+using Microsoft.Bot.Configuration;
 
 namespace SentimentBot
 {
@@ -12,9 +13,9 @@ namespace SentimentBot
 
         public ITextAnalyticsClient TextAnalytics;
 
-        public TextAnalyticsService()
+        public TextAnalyticsService(BotConfiguration botConfiguration)
         {
-            TextAnalytics = new TextAnalyticsClient()
+           // TextAnalytics = new TextAnalyticsClient()
         }
 
     }
