@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RequestFeedbackBot", "src\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoogleAuthenticationBot", "src\GoogleAuthenticationBot\GoogleAuthenticationBot.csproj", "{D396865C-4C25-41DC-9B79-87FAC617FA93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCBot", "src\MVCBot\MVCBot.csproj", "{59A6C8D5-FFEB-4831-8723-AEE7587ECD28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D396865C-4C25-41DC-9B79-87FAC617FA93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D396865C-4C25-41DC-9B79-87FAC617FA93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D396865C-4C25-41DC-9B79-87FAC617FA93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59A6C8D5-FFEB-4831-8723-AEE7587ECD28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59A6C8D5-FFEB-4831-8723-AEE7587ECD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59A6C8D5-FFEB-4831-8723-AEE7587ECD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59A6C8D5-FFEB-4831-8723-AEE7587ECD28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
