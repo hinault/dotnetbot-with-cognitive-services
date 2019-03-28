@@ -8,6 +8,13 @@
       "appId": "",
       "appPassword": "",
       "id": "1"
+    },
+    {
+      "type": "textanalytics",
+      "name": "sentiment",
+      "subscriptionKey": "",
+      "endpoint": "",
+      "id": "2"
     }
   ],
   "padlock": "",
