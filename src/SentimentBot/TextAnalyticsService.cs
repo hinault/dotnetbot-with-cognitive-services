@@ -23,7 +23,25 @@ namespace SentimentBot
             var textAnalyticsConfig = botConfiguration.Services.Where(x => x.Name == "textanalytics");
 
 
-            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials());
+            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials())
+            {
+                Endpoint = "https://canadacentral.api.cognitive.microsoft.com",
+            };
+        }
+
+
+        public string Sentiment(string text)
+        {
+
+
+            var result = TextAnalytics.SentimentAsync(true,
+                                      new MultiLanguageBatchInput(
+                                                        new List<MultiLanguageInput>()
+                                                        {
+                                                          new MultiLanguageInput("fr", "0", text)
+                                                      })).Result;
+
+           return result.Documents?[0].Score?.ToString("#.#");
         }
 
     }
@@ -33,7 +51,7 @@ namespace SentimentBot
     {
         public override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.Add("Ocp-Apim-Subscription-Key", "");
+            request.Headers.Add("Ocp-Apim-Subscription-Key", "f158c058756e4253a8aa4592a46e1888");
             return base.ProcessHttpRequestAsync(request, cancellationToken);
         }
     }

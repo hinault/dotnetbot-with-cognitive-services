@@ -82,7 +82,9 @@ namespace SentimentBot
             var environment = _isProduction ? "production" : "development";
             var service = botConfig.Services.FirstOrDefault(s => s.Type == "endpoint" && s.Name == environment);
 
-            var tt = new TextAnalyticsService(botConfig);
+            // var tt = new TextAnalyticsService(botConfig);
+
+            services.AddSingleton(sp => new TextAnalyticsService(botConfig));
 
             if (service == null && _isProduction)
             {

@@ -25,13 +25,15 @@ namespace SentimentBot
         private readonly SentimentBotAccessors _accessors;
         private readonly ILogger _logger;
 
+        private readonly TextAnalyticsService _textAnalyticsService;
+
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="conversationState">The managed conversation state.</param>
         /// <param name="loggerFactory">A <see cref="ILoggerFactory"/> that is hooked to the Azure App Service provider.</param>
         /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider"/>
-        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory)
+        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory, TextAnalyticsService textAnalyticsService)
         {
             if (conversationState == null)
             {
@@ -42,6 +44,8 @@ namespace SentimentBot
             {
                 throw new System.ArgumentNullException(nameof(loggerFactory));
             }
+
+            _textAnalyticsService = textAnalyticsService ?? throw new System.ArgumentNullException(nameof(textAnalyticsService));
 
             _accessors = new SentimentBotAccessors(conversationState)
             {
@@ -86,8 +90,9 @@ namespace SentimentBot
                 // Save the new turn count into the conversation state.
                 await _accessors.ConversationState.SaveChangesAsync(turnContext);
 
+                var tt = _textAnalyticsService.Sentiment(turnContext.Activity.Text);
                 // Echo back to the user whatever they typed.
-                var responseMessage = $"Turn {state.TurnCount}: You sent '{turnContext.Activity.Text}'\n";
+                var responseMessage = $"Turn {state.TurnCount}: You sent '{turnContext.Activity.Text}': You score '{tt}'\n";
                 await turnContext.SendActivityAsync(responseMessage);
             }
             else
