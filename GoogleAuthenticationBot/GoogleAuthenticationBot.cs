@@ -9,6 +9,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using Microsoft.Recognizers.Text;
 
 namespace GoogleAuthenticationBot
 {
@@ -57,12 +58,14 @@ namespace GoogleAuthenticationBot
             var waterfallSteps = new WaterfallStep[]
             {
                PromptStepAsync,
-               LoginStepAsync
+               LoginStepAsync,
+               LogoutStepAsync
             };
 
             // Add named dialogs to the DialogSet. These names are saved in the dialog state.
             _dialogs.Add(new WaterfallDialog("details", waterfallSteps));
             _dialogs.Add(new OAuthPrompt("auth", new OAuthPromptSettings { ConnectionName = "Google", Text = "Login Google", Title = "Login Google", Timeout = 300000 }, null));
+            _dialogs.Add(new ConfirmPrompt("confirm", defaultLocale: Culture.French));
         }
 
         /// <summary>
@@ -111,8 +114,10 @@ namespace GoogleAuthenticationBot
 
             // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
             // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
-            else if (turnContext.Activity.Type == ActivityTypes.Message)
+            else if (turnContext.Activity.Type == ActivityTypes.Message || turnContext.Activity.Type == ActivityTypes.Event)
             {
+                // if(dialogContext.ActiveDialog.Id=="")
+
                 // Continues execution of the active dialog, if there is one
                 var results = await dialogContext.ContinueDialogAsync(cancellationToken);
 
@@ -122,6 +127,9 @@ namespace GoogleAuthenticationBot
                     await dialogContext.BeginDialogAsync("details", null, cancellationToken);
                 }
             }
+
+            // Save the dialog state into the conversation state.
+            await _accessors.ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
 
         }
 
@@ -152,13 +160,43 @@ namespace GoogleAuthenticationBot
             var tokenResponse = (TokenResponse)step.Result;
             if (tokenResponse != null)
             {
-                await step.Context.SendActivityAsync($"You are now logged in. Here is your token {tokenResponse.Token}", cancellationToken: cancellationToken);
-                return Dialog.EndOfTurn;
+                await step.Context.SendActivityAsync($"Vous êtes connecté. Voici votre jeton {tokenResponse.Token}", cancellationToken: cancellationToken);
+
+                return await step.PromptAsync("confirm", new PromptOptions { Prompt = MessageFactory.Text("Voulez-vous nous laisser vos commentaires ?") }, cancellationToken);
+
+                //return await step.PromptAsync("logout", new PromptOptions { Prompt = MessageFactory.Text("Voulez-vous vous déconnecter ?") }, cancellationToken);
+             
             }
 
-            await step.Context.SendActivityAsync("Login was not successful please try again.", cancellationToken: cancellationToken);
+            await step.Context.SendActivityAsync("Echec de la connexion.", cancellationToken: cancellationToken);
             return Dialog.EndOfTurn;
         }
+
+        /// <summary>
+        /// This <see cref="WaterfallStep"/> prompts the user to log in.
+        /// </summary>
+        /// <param name="step">A <see cref="WaterfallStepContext"/> provides context for the current waterfall step.</param>
+        /// <param name="cancellationToken" >(Optional) A <see cref="CancellationToken"/> that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="Task"/> representing the operation result of the operation.</returns>
+        private static async Task<DialogTurnResult> LogoutStepAsync(WaterfallStepContext step, CancellationToken cancellationToken)
+        {
+            if ((bool)step.Result)
+            {
+                //var botAdapter = (BotFrameworkAdapter)step...Adapter;
+                //await botAdapter.SignOutUserAsync(turnContext, ConnectionName, cancellationToken: cancellationToken);
+
+                await step.Context.SendActivityAsync("Merci, vous avez été déconnecté!", cancellationToken: cancellationToken);
+            }
+            else
+            {
+                await step.Context.SendActivityAsync("Merci, a plus tard!", cancellationToken: cancellationToken);
+                
+            }
+
+            return Dialog.EndOfTurn;
+        }
+
 
 
         private static async Task SendWelcomeMessageAsync(ITurnContext turnContext, CancellationToken cancellationToken)
