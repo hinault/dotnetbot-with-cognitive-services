@@ -13,6 +13,7 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SentimentBot.TextAnalytics;
 
 namespace SentimentBot
 {
@@ -84,7 +85,7 @@ namespace SentimentBot
 
             // var tt = new TextAnalyticsService(botConfig);
 
-            services.AddSingleton(sp => new TextAnalyticsService(botConfig));
+            services.AddSingleton<ITextAnalyticsService>(sp => new TextAnalyticsService(botConfig));
 
             if (service == null && _isProduction)
             {

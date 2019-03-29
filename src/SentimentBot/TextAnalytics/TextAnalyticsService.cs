@@ -13,7 +13,7 @@ using Microsoft.Rest;
 
 namespace SentimentBot.TextAnalytics
 {
-    public class TextAnalyticsService
+    public class TextAnalyticsService : ITextAnalyticsService
     {
 
         public ITextAnalyticsClient TextAnalytics;
@@ -23,25 +23,24 @@ namespace SentimentBot.TextAnalytics
             var textAnalyticsConfig = botConfiguration.Services.Where(x => x.Name == "textanalytics");
 
 
-            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials())
+            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials("f158c058756e4253a8aa4592a46e1888"))
             {
                 Endpoint = "https://canadacentral.api.cognitive.microsoft.com",
             };
         }
 
 
-        public string Sentiment(string text)
+        public async Task<string> Sentiment(string text)
         {
 
-
-            var result = TextAnalytics.SentimentAsync(true,
-                                      new MultiLanguageBatchInput(
+            //Get the sentiment
+            var result = await TextAnalytics.SentimentAsync(multiLanguageBatchInput:new MultiLanguageBatchInput(
                                                         new List<MultiLanguageInput>()
                                                         {
                                                           new MultiLanguageInput("fr", "0", text)
-                                                      })).Result;
+                                                      }));
 
-           return result.Documents?[0].Score?.ToString("#.#");
+           return result.Documents?[0].Score?.ToString();
         }
 
     }

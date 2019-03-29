@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using SentimentBot.TextAnalytics;
 
 namespace SentimentBot
 {
@@ -25,7 +26,7 @@ namespace SentimentBot
         private readonly SentimentBotAccessors _accessors;
         private readonly ILogger _logger;
 
-        private readonly TextAnalyticsService _textAnalyticsService;
+        private readonly ITextAnalyticsService _textAnalyticsService;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -33,7 +34,7 @@ namespace SentimentBot
         /// <param name="conversationState">The managed conversation state.</param>
         /// <param name="loggerFactory">A <see cref="ILoggerFactory"/> that is hooked to the Azure App Service provider.</param>
         /// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider"/>
-        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory, TextAnalyticsService textAnalyticsService)
+        public SentimentBot(ConversationState conversationState, ILoggerFactory loggerFactory, ITextAnalyticsService textAnalyticsService)
         {
             if (conversationState == null)
             {
@@ -90,9 +91,9 @@ namespace SentimentBot
                 // Save the new turn count into the conversation state.
                 await _accessors.ConversationState.SaveChangesAsync(turnContext);
 
-                var tt = _textAnalyticsService.Sentiment(turnContext.Activity.Text);
+                var sentimentResult = await _textAnalyticsService.Sentiment(turnContext.Activity.Text);
                 // Echo back to the user whatever they typed.
-                var responseMessage = $"Turn {state.TurnCount}: You sent '{turnContext.Activity.Text}': You score '{tt}'\n";
+                var responseMessage = $"Vous avez saisie '{turnContext.Activity.Text}': L'analyse sentimental donne le score suivant '{sentimentResult}'\n";
                 await turnContext.SendActivityAsync(responseMessage);
             }
             else
