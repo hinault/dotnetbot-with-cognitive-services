@@ -93,7 +93,7 @@ namespace SentimentBot
 
                 var sentimentResult = await _textAnalyticsService.Sentiment(turnContext.Activity.Text);
                 // Echo back to the user whatever they typed.
-                var responseMessage = $"Vous avez saisie '{turnContext.Activity.Text}': L'analyse sentimental donne le score suivant '{sentimentResult}'\n";
+                var responseMessage = $"Vous avez saisie '{turnContext.Activity.Text}'. L'analyse sentimentale donne le score suivant '{sentimentResult}'\n";
                 await turnContext.SendActivityAsync(responseMessage);
             }
             else

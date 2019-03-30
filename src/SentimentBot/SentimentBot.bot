@@ -12,8 +12,8 @@
     {
       "type": "textanalytics",
       "name": "sentiment",
-      "subscriptionKey": "",
-      "endpoint": "",
+      "subscriptionKey": "f158c058756e4253a8aa4592a46e1888",
+      "endpoint": "https://canadacentral.api.cognitive.microsoft.com",
       "id": "2"
     }
   ],

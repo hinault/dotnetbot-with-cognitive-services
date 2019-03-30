@@ -8,8 +8,7 @@ using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
 using Microsoft.Azure.CognitiveServices.Language.TextAnalytics.Models;
 using Microsoft.Bot.Configuration;
 using Microsoft.Rest;
-
-
+using Newtonsoft.Json;
 
 namespace SentimentBot.TextAnalytics
 {
@@ -20,12 +19,15 @@ namespace SentimentBot.TextAnalytics
 
         public TextAnalyticsService(BotConfiguration botConfiguration)
         {
-            var textAnalyticsConfig = botConfiguration.Services.Where(x => x.Name == "textanalytics");
+            var textAnalyticsConfig = botConfiguration.Services.Where(x => x.Name == "sentiment")?.FirstOrDefault();
 
+            var subscriptionKey = textAnalyticsConfig.Properties.SelectToken("subscriptionKey").ToString();
 
-            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials("f158c058756e4253a8aa4592a46e1888"))
+            var endPoint = textAnalyticsConfig.Properties.SelectToken("endpoint").ToString();
+
+            TextAnalytics = new TextAnalyticsClient(new ApiKeyServiceClientCredentials(subscriptionKey))
             {
-                Endpoint = "https://canadacentral.api.cognitive.microsoft.com",
+                Endpoint = endPoint,
             };
         }
 
