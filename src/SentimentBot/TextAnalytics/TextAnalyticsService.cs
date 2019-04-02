@@ -32,17 +32,18 @@ namespace SentimentBot.TextAnalytics
         }
 
 
+
         public async Task<string> Sentiment(string text)
         {
 
             //Get the sentiment
-            var result = await TextAnalytics.SentimentAsync(multiLanguageBatchInput:new MultiLanguageBatchInput(
+            var result = await TextAnalytics.SentimentAsync(multiLanguageBatchInput: new MultiLanguageBatchInput(
                                                         new List<MultiLanguageInput>()
                                                         {
                                                           new MultiLanguageInput("fr", "0", text)
                                                       }));
 
-           return result.Documents?[0].Score?.ToString();
+            return result.Documents?[0].Score?.ToString();
         }
 
     }
